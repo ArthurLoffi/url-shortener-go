@@ -1,0 +1,24 @@
+basePath: /api
+host: localhost:8080
+info:
+  contact: {}
+  description: API focused on being a URL shortener.
+  title: URL Shortener
+  version: "1.0"
+paths:
+  /healthy:
+    get:
+      description: Returns API health status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+      summary: Health check
+      tags:
+      - health
+swagger: "2.0"
