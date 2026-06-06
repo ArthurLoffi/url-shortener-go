@@ -2,6 +2,7 @@ package main
 
 import (
 	"url-shortener-go/docs"
+	"url-shortener-go/internal/adapters/database"
 
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -17,6 +18,8 @@ import (
 // @name Authorization
 func main() {
 	r := gin.New()
+	
+	database.Connect()
 
 	r.Use(gin.Recovery())
 
