@@ -1,8 +1,8 @@
 package domain
 
 type Url struct {
-	id uint `gorm:"primaryKey;autoincrement"`
-	originalUrl string
-	ShortUrl string
-	Clicks int64
+	Id uint `json:"id" gorm:"primaryKey;autoincrement"`
+	OriginalUrl string  `json:"original_url" gorm:"column:original_url"`
+	ShortUrl string `json:"short_url"`
+	Clicks int64 `json:"clicks"`
 }
