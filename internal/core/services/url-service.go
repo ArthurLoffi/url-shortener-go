@@ -20,6 +20,10 @@ func (s *UrlService) Create(ctx context.Context, url *domain.Url) error {
 	return s.repo.Create(ctx, url);
 }
 
+func (s *UrlService) Redirect(ctx context.Context, code string) (*domain.Url, error) {
+	return s.repo.GetByShortCode(ctx, code)
+}
+
 func (s *UrlService) GetByID(ctx context.Context, id uint) (*domain.Url, error) {
 	return s.repo.GetByID(ctx, id)
 }

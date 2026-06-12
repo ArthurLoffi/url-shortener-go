@@ -41,6 +41,17 @@ func (h *UrlHandler) Create(c *gin.Context) {
 	})
 }
 
+func (h *UrlHandler) Redirect(c *gin.Context) {
+	code := c.Param("code")
+
+	url, err := h.service.Redirect(c.Request.Context(), code)
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "URL não encontrada"})
+        return
+    }
+    c.Redirect(http.StatusMovedPermanently, url.OriginalUrl)
+}
+
 func (h *UrlHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
 	idUint64, err := strconv.ParseUint(id, 10, 64)
