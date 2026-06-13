@@ -17,7 +17,7 @@ func NewUrlRepository(db *gorm.DB) *UrlRepository {
 	}
 }
 
-func (r *UrlRepository) Create(ctx context.Context, url *domain.Url) error {
+func (r *UrlRepository) CreateUrl(ctx context.Context, url *domain.Url) error {
 	return r.db.WithContext(ctx).Create(url).Error
 }
 

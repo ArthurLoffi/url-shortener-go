@@ -16,8 +16,8 @@ func NewUrlService(repo ports.UrlRepository) *UrlService {
 	}
 }
 
-func (s *UrlService) Create(ctx context.Context, url *domain.Url) error {
-	return s.repo.Create(ctx, url);
+func (s *UrlService) CreateUrl(ctx context.Context, url *domain.Url) error {
+	return s.repo.CreateUrl(ctx, url);
 }
 
 func (s *UrlService) Redirect(ctx context.Context, code string) (*domain.Url, error) {

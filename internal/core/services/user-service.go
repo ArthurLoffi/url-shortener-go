@@ -21,7 +21,7 @@ func (s *UserService) CreateUser(ctx context.Context, name string) error {
 		Name: name,
 	}
 
-	return s.repo.Create(ctx, user)
+	return s.repo.CreateUser(ctx, user)
 }
 
 func (s *UserService) GetUserByName(ctx context.Context, name string) (*domain.User, error) {

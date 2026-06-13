@@ -30,6 +30,10 @@ func main() {
 	urlService := services.NewUrlService(urlRepo)
 	urlHandler := https.NewUrlHandler(urlService)
 
+	userRepo := repository.NewUserRepository(database.Database)
+	userService := services.NewUserService(userRepo)
+	userHandler := https.NewUserHandler(userService)
+
 	docs.SwaggerInfo.BasePath = "/api"
 
 	r.GET("/api/healthy", healthyHandler)
@@ -37,13 +41,18 @@ func main() {
 
 	url := r.Group("/api/urls")
 	{
-		url.POST("/", urlHandler.Create)
+		url.POST("/", urlHandler.CreateUrl)
 		url.GET("/:id", urlHandler.GetByID)
 		url.GET("/short/:code", urlHandler.GetByShortCode)
 		url.GET("/user/:id", urlHandler.GetByUserID)
 	}
-
 	r.GET("/:code", urlHandler.Redirect)
+
+	user := r.Group("/api/users")
+	{
+		user.POST("/", userHandler.CreateUser)
+		user.GET("/:name", userHandler.GetUserByName)
+	}
 
 	r.Run(":8080")
 }

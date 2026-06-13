@@ -19,7 +19,7 @@ func NewUrlHandler(service *services.UrlService) *UrlHandler {
 	}
 }
 
-func (h *UrlHandler) Create(c *gin.Context) {
+func (h *UrlHandler) CreateUrl(c *gin.Context) {
 	var url domain.Url
 
 	if err := c.ShouldBindJSON(&url); err != nil {
@@ -29,7 +29,7 @@ func (h *UrlHandler) Create(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.Create(c.Request.Context(), &url); err != nil {
+	if err := h.service.CreateUrl(c.Request.Context(), &url); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

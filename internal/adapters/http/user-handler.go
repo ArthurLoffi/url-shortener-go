@@ -8,14 +8,14 @@ import (
 )
 
 type UserHandler struct {
-	service services.UserService
+	service *services.UserService
 }
 
 type CreateUserRequest struct {
 	Name string `json:"name"`
 }
 
-func NewUserHandler(service services.UserService) *UserHandler {
+func NewUserHandler(service *services.UserService) *UserHandler {
 	return &UserHandler{
 		service: service,
 	}

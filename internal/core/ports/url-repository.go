@@ -6,7 +6,7 @@ import (
 )
 
 type UrlRepository interface {
-	Create(ctx context.Context, url *domain.Url) error
+	CreateUrl(ctx context.Context, url *domain.Url) error
 	Redirect(ctx context.Context, code string) (*domain.Url, error)
 	GetByID(ctx context.Context, id uint) (*domain.Url, error)
 	GetByShortCode(ctx context.Context, code string) (*domain.Url, error)
