@@ -3,8 +3,8 @@ package domain
 import "time"
 
 type Click struct {
-	id uint `gorm:"primaryKey;autoincrement"`
-	urlid uint
-	ipAdress string
+	Id uint `gorm:"primaryKey;autoincrement"`
+	Urlid uint `gorm:"column:url_id"`
+    IPAddress string `gorm:"column:ip_address"`
 	ClickedAt time.Time
 }

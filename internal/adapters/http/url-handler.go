@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 	"strconv"
+	"time"
 	"url-shortener-go/internal/core/domain"
 	"url-shortener-go/internal/core/services"
 
@@ -11,11 +12,13 @@ import (
 
 type UrlHandler struct {
 	service *services.UrlService
+	clickService *services.ClickService
 }
 
-func NewUrlHandler(service *services.UrlService) *UrlHandler {
+func NewUrlHandler(service *services.UrlService, clickService *services.ClickService) *UrlHandler {
 	return &UrlHandler{
 		service: service,
+		clickService: clickService,
 	}
 }
 
@@ -49,6 +52,14 @@ func (h *UrlHandler) Redirect(c *gin.Context) {
         c.JSON(http.StatusNotFound, gin.H{"error": "URL não encontrada"})
         return
     }
+
+	click := &domain.Click{
+        Urlid: url.Id,
+        IPAddress: c.ClientIP(),
+        ClickedAt: time.Now(),
+    }
+    h.clickService.Create(c.Request.Context(), click)
+
     c.Redirect(http.StatusMovedPermanently, url.OriginalUrl)
 }
 

@@ -14,7 +14,12 @@ import (
 func SetupRoutes(r *gin.Engine) {
 	urlRepo := repository.NewUrlRepository(database.Database)
 	urlService := services.NewUrlService(urlRepo)
-	urlHandler := https.NewUrlHandler(urlService)
+
+	clickRepo := repository.NewClickRepository(database.Database)
+	clickService := services.NewClickService(clickRepo)
+	clickHandler := https.NewClickHandler(clickService, urlService)
+	
+	urlHandler := https.NewUrlHandler(urlService, clickService)
 
 	userRepo := repository.NewUserRepository(database.Database)
 	userService := services.NewUserService(userRepo)
@@ -38,6 +43,13 @@ func SetupRoutes(r *gin.Engine) {
 		user.POST("/", userHandler.CreateUser)
 		user.GET("/:name", userHandler.GetUserByName)
 	}
+
+	clicks := r.Group("/api/clicks")
+    {
+        clicks.POST("/:urlId", clickHandler.Create)
+        clicks.GET("/:urlId", clickHandler.GetByURLID)
+        clicks.GET("/:urlId/count", clickHandler.CountByURLID)
+    }
 }
 
 func healthyHandler(c *gin.Context) {

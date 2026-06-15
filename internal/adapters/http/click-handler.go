@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 	"strconv"
+	"time"
 	"url-shortener-go/internal/core/domain"
 	"url-shortener-go/internal/core/services"
 
@@ -10,85 +11,71 @@ import (
 )
 
 type ClickHandler struct {
-	service services.ClickService
+	service *services.ClickService
+	urlService *services.UrlService
 }
 
-func NewClickHandler(service services.ClickService) *ClickHandler {
+func NewClickHandler(service *services.ClickService, urlService *services.UrlService) *ClickHandler {
 	return &ClickHandler{
 		service: service,
+		urlService: urlService,
 	}
 }
 
 func (h *ClickHandler) Create(c *gin.Context) {
-	var request *domain.Click
+    urlID := c.Param("urlId")
+    urlID64, err := strconv.ParseUint(urlID, 10, 64)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "urlId inválido"})
+        return
+    }
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+    click := &domain.Click{
+        Urlid: uint(urlID64),
+        IPAddress: c.ClientIP(),
+        ClickedAt: time.Now(),
+    }
 
-	if err := h.service.Create(c.Request.Context(), request); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+    if err := h.service.Create(c.Request.Context(), click); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
 
-	c.JSON(http.StatusCreated, gin.H{
-		"success": "User created successfully",
-	})
+    c.JSON(http.StatusCreated, gin.H{"success": "Click registered"})
 }
 
 func (h *ClickHandler) GetByURLID(c *gin.Context) {
-	urlID := c.Param("urlId")
-	urlID64, err := strconv.ParseUint(urlID, 10, 64)
+	code := c.Param("urlId")
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+    url, err := h.urlService.GetByShortCode(c.Request.Context(), code)
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "URL não encontrada"})
+        return
+    }
 
-	urlIDuint := uint(urlID64)
+    clicks, err := h.service.GetByURLID(c.Request.Context(), url.Id)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
 
-	click, err := h.service.GetByURLID(c.Request.Context(), urlIDuint)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"click": click,
-	})
+    c.JSON(http.StatusOK, gin.H{"clicks": clicks})
 }
 
 func (h *ClickHandler) CountByURLID(c *gin.Context) {
-	urlID := c.Param("urlId")
-	urlID64, err := strconv.ParseUint(urlID, 10, 64)
+	code := c.Param("urlId")
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+    url, err := h.urlService.GetByShortCode(c.Request.Context(), code)
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "URL não encontrada"})
+        return
+    }
 
-	urlIDuint := uint(urlID64)
+    count, err := h.service.CountByURLID(c.Request.Context(), url.Id)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
 
-	click, err := h.service.CountByURLID(c.Request.Context(), urlIDuint)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"clicks": click,
-	})
+    c.JSON(http.StatusOK, gin.H{"clicks": count})
 }
