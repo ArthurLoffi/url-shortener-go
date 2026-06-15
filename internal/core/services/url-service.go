@@ -4,6 +4,7 @@ import (
 	"context"
 	"url-shortener-go/internal/core/domain"
 	"url-shortener-go/internal/core/ports"
+	"url-shortener-go/internal/core/utils"
 )
 
 type UrlService struct {
@@ -17,6 +18,13 @@ func NewUrlService(repo ports.UrlRepository) *UrlService {
 }
 
 func (s *UrlService) CreateUrl(ctx context.Context, url *domain.Url) error {
+	slug, err := utils.GenerateSlug()
+	if err != nil {
+		return err
+	}
+
+	url.ShortUrl = slug
+
 	return s.repo.CreateUrl(ctx, url);
 }
 
