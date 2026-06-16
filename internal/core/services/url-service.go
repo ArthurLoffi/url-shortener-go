@@ -2,34 +2,49 @@ package services
 
 import (
 	"context"
+	"url-shortener-go/internal/adapters/cache"
 	"url-shortener-go/internal/core/domain"
 	"url-shortener-go/internal/core/ports"
 	"url-shortener-go/internal/core/utils"
 )
 
 type UrlService struct {
-	repo ports.UrlRepository
+	repo  ports.UrlRepository
+	cache *cache.UrlCache
 }
 
-func NewUrlService(repo ports.UrlRepository) *UrlService {
+func NewUrlService(repo ports.UrlRepository, cache *cache.UrlCache) *UrlService {
 	return &UrlService{
-		repo: repo,
+		repo:  repo,
+		cache: cache,
 	}
 }
 
 func (s *UrlService) CreateUrl(ctx context.Context, url *domain.Url) error {
 	slug, err := utils.GenerateSlug()
-	if err != nil {
-		return err
-	}
+    if err != nil {
+        return err
+    }
 
-	url.ShortUrl = slug
+    url.ShortUrl = slug
 
-	return s.repo.CreateUrl(ctx, url);
+    return s.repo.CreateUrl(ctx, url)
 }
 
 func (s *UrlService) Redirect(ctx context.Context, code string) (*domain.Url, error) {
-	return s.repo.GetByShortCode(ctx, code)
+	cached, err := s.cache.Get(ctx, code)
+	if err == nil {
+		return &domain.Url{OriginalUrl: cached}, nil
+	}
+
+	url, err := s.repo.GetByShortCode(ctx, code)
+	if err != nil {
+		return nil, err
+	}
+
+	s.cache.Set(ctx, code, url.OriginalUrl)
+
+	return url, nil
 }
 
 func (s *UrlService) GetByID(ctx context.Context, id uint) (*domain.Url, error) {
@@ -40,6 +55,6 @@ func (s *UrlService) GetByShortCode(ctx context.Context, code string) (*domain.U
 	return s.repo.GetByShortCode(ctx, code)
 }
 
-func (s *UrlService) GetByUserID(ctx context.Context, userID uint) ([]domain.Url, error){
+func (s *UrlService) GetByUserID(ctx context.Context, userID uint) ([]domain.Url, error) {
 	return s.repo.GetByUserID(ctx, userID)
 }

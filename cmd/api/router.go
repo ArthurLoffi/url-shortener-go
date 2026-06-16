@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+	"url-shortener-go/internal/adapters/cache"
 	"url-shortener-go/internal/adapters/database"
 	https "url-shortener-go/internal/adapters/http"
 	"url-shortener-go/internal/adapters/repository"
@@ -12,8 +14,15 @@ import (
 )
 
 func SetupRoutes(r *gin.Engine) {
+	redisClient, err := database.NewRedisClient()
+    if err != nil {
+        log.Fatal(err)
+    }
+	
+	urlCache := cache.NewUrlCache(redisClient)
+
 	urlRepo := repository.NewUrlRepository(database.Database)
-	urlService := services.NewUrlService(urlRepo)
+	urlService := services.NewUrlService(urlRepo, urlCache)
 
 	clickRepo := repository.NewClickRepository(database.Database)
 	clickService := services.NewClickService(clickRepo)
