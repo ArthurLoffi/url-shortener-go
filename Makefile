@@ -1,4 +1,4 @@
-.PHONY: docs
+.PHONY: docs docker docker-down
 
 build:
 	go mod tidy
@@ -9,3 +9,9 @@ run:
 
 docs:
 	swag init -g ./cmd/api/main.go --output ./docs
+
+docker:
+	docker compose -f ./deployments/docker-compose.yml up -d
+
+docker-down:
+	docker compose -f ./deployments/docker-compose.yml  down
