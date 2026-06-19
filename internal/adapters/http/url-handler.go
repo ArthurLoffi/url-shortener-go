@@ -49,7 +49,11 @@ func (h *UrlHandler) Redirect(c *gin.Context) {
 
 	url, err := h.service.Redirect(c.Request.Context(), code)
     if err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "URL não encontrada"})
+        if err.Error() == "url expirada" {
+            c.JSON(http.StatusGone, gin.H{"error": "URL expirada"}) // 410
+            return
+        }
+        c.JSON(http.StatusNotFound, gin.H{"error": "URL não encontrada"}) // 404
         return
     }
 

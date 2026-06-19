@@ -27,6 +27,10 @@ func (r *UrlRepository) Redirect(ctx context.Context, code string) (*domain.Url,
     return &url, err
 }
 
+func (r *UrlRepository) UpdateExpired(ctx context.Context, id uint) error {
+	return r.db.Model(&domain.Url{}).Where("id = ?", id).Update("expired", true).Error
+}
+
 func (r *UrlRepository) GetByID(ctx context.Context, id uint) (*domain.Url, error) {
 	var url domain.Url
 	err := r.db.WithContext(ctx).First(&url, id).Error

@@ -2,6 +2,8 @@ package services
 
 import (
 	"context"
+	"fmt"
+	"time"
 	"url-shortener-go/internal/adapters/cache"
 	"url-shortener-go/internal/core/domain"
 	"url-shortener-go/internal/core/ports"
@@ -32,15 +34,20 @@ func (s *UrlService) CreateUrl(ctx context.Context, url *domain.Url) error {
 }
 
 func (s *UrlService) Redirect(ctx context.Context, code string) (*domain.Url, error) {
-	cached, err := s.cache.Get(ctx, code)
-	if err == nil {
-		return &domain.Url{OriginalUrl: cached}, nil
-	}
-
 	url, err := s.repo.GetByShortCode(ctx, code)
 	if err != nil {
 		return nil, err
 	}
+
+    if time.Since(url.CreatedAt) > 24*time.Hour {
+        s.repo.UpdateExpired(ctx, url.Id)
+        return nil, fmt.Errorf("url expirada")
+    }
+
+    cached, err := s.cache.Get(ctx, code)
+    if err == nil {
+        return &domain.Url{OriginalUrl: cached}, nil
+    }
 
 	s.cache.Set(ctx, code, url.OriginalUrl)
 
