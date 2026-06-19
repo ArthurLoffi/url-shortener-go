@@ -22,6 +22,18 @@ func NewUrlHandler(service *services.UrlService, clickService *services.ClickSer
 	}
 }
 
+// CreateUrl godoc
+//
+// @Summary Create a new URL
+// @Description Create a shortened URL and store it in the database
+// @Tags urls
+// @Accept json
+// @Produce json
+// @Param body body domain.Url true "URL data"
+// @Success 201 {object} domain.Url
+// @Failure 400
+// @Failure 500
+// @Router /api/urls [post]
 func (h *UrlHandler) CreateUrl(c *gin.Context) {
 	var url domain.Url
 
@@ -44,6 +56,16 @@ func (h *UrlHandler) CreateUrl(c *gin.Context) {
 	})
 }
 
+// Redirect godoc
+//
+// @Summary Redirect to original URL
+// @Description Redirects the user to the original URL associated with the short code
+// @Tags urls
+// @Param code path string true "Short URL code"
+// @Success 301 "Redirect"
+// @Failure 404
+// @Failure 410
+// @Router /{code} [get]
 func (h *UrlHandler) Redirect(c *gin.Context) {
 	code := c.Param("code")
 
@@ -67,6 +89,18 @@ func (h *UrlHandler) Redirect(c *gin.Context) {
     c.Redirect(http.StatusMovedPermanently, url.OriginalUrl)
 }
 
+// GetByID godoc
+//
+// @Summary Get URL by ID
+// @Description Retrieve a URL by its database ID
+// @Tags urls
+// @Produce json
+// @Param id path int true "URL ID"
+// @Success 200 {object} domain.Url
+// @Failure 400
+// @Failure 404
+// @Failure 500
+// @Router /api/urls/{id} [get]
 func (h *UrlHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
 	idUint64, err := strconv.ParseUint(id, 10, 64)
@@ -93,6 +127,18 @@ func (h *UrlHandler) GetByID(c *gin.Context) {
 	})
 }
 
+// GetByShortCode godoc
+//
+// @Summary Get URL by short code
+// @Description Retrieve a URL using its generated short code
+// @Tags urls
+// @Produce json
+// @Param code path string true "Short URL code"
+// @Success 200 {object} domain.Url
+// @Failure 400
+// @Failure 404
+// @Failure 500
+// @Router /api/urls/short/{code} [get]
 func (h *UrlHandler) GetByShortCode(c *gin.Context) {
 	code := c.Param("code")
 
@@ -116,6 +162,18 @@ func (h *UrlHandler) GetByShortCode(c *gin.Context) {
 	})
 }
 
+// GetByUserID godoc
+//
+// @Summary Get URLs by user ID
+// @Description Retrieve all URLs associated with a user
+// @Tags urls
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {array} domain.Url
+// @Failure 400
+// @Failure 404
+// @Failure 500
+// @Router /api/urls/user/{id} [get]
 func (h *UrlHandler) GetByUserID(c *gin.Context) {
 	idUser := c.Param("id")
 	idUserUint64, err := strconv.ParseUint(idUser, 10, 64)

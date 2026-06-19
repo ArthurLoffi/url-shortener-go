@@ -1,9 +1,264 @@
 basePath: /api
+definitions:
+  domain.Url:
+    properties:
+      clicks:
+        type: integer
+      created_at:
+        type: string
+      expired:
+        type: boolean
+      id:
+        type: integer
+      original_url:
+        type: string
+      short_url:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  http.CreateUserRequest:
+    properties:
+      name:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
   description: API focused on being a URL shortener.
   title: URL Shortener
   version: "1.0"
-paths: {}
+paths:
+  /{code}:
+    get:
+      description: Redirects the user to the original URL associated with the short
+        code
+      parameters:
+      - description: Short URL code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "301":
+          description: Redirect
+        "404":
+          description: Not Found
+        "410":
+          description: Gone
+      summary: Redirect to original URL
+      tags:
+      - urls
+  /api/clicks/{urlId}:
+    get:
+      description: Retrieve all clicks associated with a short URL
+      parameters:
+      - description: Short URL code
+        in: path
+        name: urlId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get clicks by URL code
+      tags:
+      - clicks
+    post:
+      description: Register a click for a URL
+      parameters:
+      - description: URL ID
+        in: path
+        name: urlId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Register a click
+      tags:
+      - clicks
+  /api/clicks/{urlId}/count:
+    get:
+      description: Returns the total number of clicks for a short URL
+      parameters:
+      - description: Short URL code
+        in: path
+        name: urlId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Count clicks by URL code
+      tags:
+      - clicks
+  /api/urls:
+    post:
+      consumes:
+      - application/json
+      description: Create a shortened URL and store it in the database
+      parameters:
+      - description: URL data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Url'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Url'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Create a new URL
+      tags:
+      - urls
+  /api/urls/{id}:
+    get:
+      description: Retrieve a URL by its database ID
+      parameters:
+      - description: URL ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Url'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get URL by ID
+      tags:
+      - urls
+  /api/urls/short/{code}:
+    get:
+      description: Retrieve a URL using its generated short code
+      parameters:
+      - description: Short URL code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Url'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get URL by short code
+      tags:
+      - urls
+  /api/urls/user/{id}:
+    get:
+      description: Retrieve all URLs associated with a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Url'
+            type: array
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get URLs by user ID
+      tags:
+      - urls
+  /api/users:
+    post:
+      consumes:
+      - application/json
+      description: Create a user with the provided name
+      parameters:
+      - description: User data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Create a new user
+      tags:
+      - users
+  /api/users/{name}:
+    get:
+      description: Retrieve a user by name
+      parameters:
+      - description: User name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get user by name
+      tags:
+      - users
 swagger: "2.0"

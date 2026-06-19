@@ -22,6 +22,17 @@ func NewClickHandler(service *services.ClickService, urlService *services.UrlSer
 	}
 }
 
+// CreateClick godoc
+//
+// @Summary Register a click
+// @Description Register a click for a URL
+// @Tags clicks
+// @Produce json
+// @Param urlId path int true "URL ID"
+// @Success 201
+// @Failure 400
+// @Failure 500
+// @Router /api/clicks/{urlId} [post]
 func (h *ClickHandler) Create(c *gin.Context) {
     urlID := c.Param("urlId")
     urlID64, err := strconv.ParseUint(urlID, 10, 64)
@@ -44,6 +55,17 @@ func (h *ClickHandler) Create(c *gin.Context) {
     c.JSON(http.StatusCreated, gin.H{"success": "Click registered"})
 }
 
+// GetClicksByURLID godoc
+//
+// @Summary Get clicks by URL code
+// @Description Retrieve all clicks associated with a short URL
+// @Tags clicks
+// @Produce json
+// @Param urlId path string true "Short URL code"
+// @Success 200
+// @Failure 404
+// @Failure 500
+// @Router /api/clicks/{urlId} [get]
 func (h *ClickHandler) GetByURLID(c *gin.Context) {
 	code := c.Param("urlId")
 
@@ -62,6 +84,17 @@ func (h *ClickHandler) GetByURLID(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"clicks": clicks})
 }
 
+// CountClicksByURLID godoc
+//
+// @Summary Count clicks by URL code
+// @Description Returns the total number of clicks for a short URL
+// @Tags clicks
+// @Produce json
+// @Param urlId path string true "Short URL code"
+// @Success 200
+// @Failure 404
+// @Failure 500
+// @Router /api/clicks/{urlId}/count [get]
 func (h *ClickHandler) CountByURLID(c *gin.Context) {
 	code := c.Param("urlId")
 

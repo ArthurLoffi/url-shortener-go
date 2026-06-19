@@ -21,6 +21,18 @@ func NewUserHandler(service *services.UserService) *UserHandler {
 	}
 }
 
+// CreateUser godoc
+//
+// @Summary Create a new user
+// @Description Create a user with the provided name
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param body body CreateUserRequest true "User data"
+// @Success 201
+// @Failure 400
+// @Failure 500
+// @Router /api/users [post]
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var request CreateUserRequest
 
@@ -43,6 +55,18 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	})
 }
 
+// GetUserByName godoc
+//
+// @Summary Get user by name
+// @Description Retrieve a user by name
+// @Tags users
+// @Produce json
+// @Param name path string true "User name"
+// @Success 200
+// @Failure 400
+// @Failure 404
+// @Failure 500
+// @Router /api/users/{name} [get]
 func (h *UserHandler) GetUserByName(c *gin.Context) {
 	name :=  c.Param("name")
 
