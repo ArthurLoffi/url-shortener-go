@@ -4,6 +4,8 @@ import (
 	"context"
 	"url-shortener-go/internal/core/domain"
 	"url-shortener-go/internal/core/ports"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -17,9 +19,15 @@ func NewUserService(repo ports.UserRepository) *UserService {
 }
 
 func (s *UserService) CreateUser(ctx context.Context, name, password string) error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	
+	if err != nil {
+		return err
+	}
+
 	user := &domain.User{
 		Name: name,
-		Password: password,
+		Password: string(hashedPassword),
 	}
 	return s.repo.CreateUser(ctx, user)
 }
