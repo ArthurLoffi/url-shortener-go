@@ -21,6 +21,8 @@ definitions:
     properties:
       name:
         type: string
+      password:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -218,7 +220,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a user with the provided name
+      description: Create a user with the provided name and password
       parameters:
       - description: User data
         in: body

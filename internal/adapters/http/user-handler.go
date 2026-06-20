@@ -13,6 +13,7 @@ type UserHandler struct {
 
 type CreateUserRequest struct {
 	Name string `json:"name"`
+	Password string `json:"password"`
 }
 
 func NewUserHandler(service *services.UserService) *UserHandler {
@@ -24,7 +25,7 @@ func NewUserHandler(service *services.UserService) *UserHandler {
 // CreateUser godoc
 //
 // @Summary Create a new user
-// @Description Create a user with the provided name
+// @Description Create a user with the provided name and password
 // @Tags users
 // @Accept json
 // @Produce json
@@ -43,7 +44,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.CreateUser(c.Request.Context(), request.Name); err != nil {
+	if err := h.service.CreateUser(c.Request.Context(), request.Name, request.Password); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

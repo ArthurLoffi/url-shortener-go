@@ -20,7 +20,7 @@ func main() {
 	database.Connect()
 
 	r.Use(gin.Recovery())
-	docs.SwaggerInfo.BasePath = "/api"
+	docs.SwaggerInfo.BasePath = "/"
 
 	SetupRoutes(r)
 	r.Run(":8080")

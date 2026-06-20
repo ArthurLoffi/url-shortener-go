@@ -16,11 +16,11 @@ func NewUserService(repo ports.UserRepository) *UserService {
 	}
 }
 
-func (s *UserService) CreateUser(ctx context.Context, name string) error {
+func (s *UserService) CreateUser(ctx context.Context, name, password string) error {
 	user := &domain.User{
 		Name: name,
+		Password: password,
 	}
-
 	return s.repo.CreateUser(ctx, user)
 }
 

@@ -268,7 +268,7 @@ const docTemplate = `{
         },
         "/api/users": {
             "post": {
-                "description": "Create a user with the provided name",
+                "description": "Create a user with the provided name and password",
                 "consumes": [
                     "application/json"
                 ],
@@ -399,6 +399,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "name": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }
