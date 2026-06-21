@@ -11,7 +11,7 @@ type UserHandler struct {
 	service *services.UserService
 }
 
-type CreateUserRequest struct {
+type UserRequest struct {
 	Name string `json:"name"`
 	Password string `json:"password"`
 }
@@ -35,7 +35,7 @@ func NewUserHandler(service *services.UserService) *UserHandler {
 // @Failure 500
 // @Router /api/users [post]
 func (h *UserHandler) CreateUser(c *gin.Context) {
-	var request CreateUserRequest
+	var request UserRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -88,5 +88,24 @@ func (h *UserHandler) GetUserByName(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
+	})
+}
+
+func (h *UserHandler) Login(c *gin.Context) {
+	var request UserRequest
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, err := h.service.Login(c.Request.Context(), request.Name, request.Password)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
 	})
 }

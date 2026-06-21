@@ -26,3 +26,9 @@ func (r *UserRepository) GetUserByName(ctx context.Context, name string) (*domai
 	err := r.db.WithContext(ctx).Where("name = ?", name).First(&user).Error
 	return &user, err
 }
+
+func (r *UserRepository) UserLogin(ctx context.Context, userRequest *domain.User) (*domain.User, error) {
+	var user domain.User
+	err := r.db.WithContext(ctx).Where("name = ?", userRequest.Name).First(&user).Error
+	return &user, err
+}

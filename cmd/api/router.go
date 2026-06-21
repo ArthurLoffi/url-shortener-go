@@ -7,6 +7,7 @@ import (
 	https "url-shortener-go/internal/adapters/http"
 	"url-shortener-go/internal/adapters/repository"
 	"url-shortener-go/internal/core/services"
+	"url-shortener-go/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -35,10 +36,12 @@ func SetupRoutes(r *gin.Engine) {
 	userHandler := https.NewUserHandler(userService)
 
 	
-	r.GET("/api/healthy", healthyHandler)
-	r.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.GET("/healthy", healthyHandler)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	protect := r.Group("/api")
+	protect.Use(middleware.Auth())
 
-	url := r.Group("/api/urls")
+	url := protect.Group("/urls")
 	{
 		url.POST("/", urlHandler.CreateUrl)
 		url.GET("/:id", urlHandler.GetByID)
@@ -47,13 +50,14 @@ func SetupRoutes(r *gin.Engine) {
 	}
 	r.GET("/:code", urlHandler.Redirect)
 
-	user := r.Group("/api/users")
+	user := protect.Group("/users")
 	{
 		user.POST("/", userHandler.CreateUser)
 		user.GET("/:name", userHandler.GetUserByName)
 	}
+	r.POST("/login", userHandler.Login)
 
-	clicks := r.Group("/api/clicks")
+	clicks := protect.Group("/clicks")
     {
         clicks.POST("/:urlId", clickHandler.Create)
         clicks.GET("/:urlId", clickHandler.GetByURLID)
