@@ -37,7 +37,7 @@ func (i *IpRateLimiter) getLimiter(ip string) *rate.Limiter {
 func RateLimitMiddleware(limiter *IpRateLimiter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		ip := c.ClientIP()
+		ip := getClientIP(c.Request)
 
 		if !limiter.getLimiter(ip).Allow() {
 			c.JSON(http.StatusTooManyRequests, gin.H{
@@ -50,4 +50,15 @@ func RateLimitMiddleware(limiter *IpRateLimiter) gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func getClientIP(r *http.Request) string {
+    ip := r.Header.Get("X-Real-IP")
+    if ip == "" {
+        ip = r.Header.Get("X-Forwarded-For")
+    }
+    if ip == "" {
+        ip = r.RemoteAddr
+    }
+    return ip
 }
