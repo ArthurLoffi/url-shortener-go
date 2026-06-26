@@ -1,8 +1,11 @@
 package main
 
 import (
+	"log/slog"
+	"os"
 	"url-shortener-go/docs"
 	"url-shortener-go/internal/adapters/database"
+	"url-shortener-go/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,9 +20,12 @@ import (
 func main() {
 	r := gin.New()
 
-	database.Connect()
+	r.Use(middleware.RateLimitMiddleware(middleware.NewIPRateLimiter()))
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+    r.Use(gin.Recovery())
+    r.Use(middleware.SlogMiddleware(logger))
 
-	r.Use(gin.Recovery())
+	database.Connect()
 	docs.SwaggerInfo.BasePath = "/"
 
 	SetupRoutes(r)

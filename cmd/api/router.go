@@ -15,7 +15,6 @@ import (
 )
 
 func SetupRoutes(r *gin.Engine) {
-	limiter := middleware.NewIPRateLimiter()
 	redisClient, err := database.NewRedisClient()
     if err != nil {
         log.Fatal(err)
@@ -36,8 +35,6 @@ func SetupRoutes(r *gin.Engine) {
 	userService := services.NewUserService(userRepo)
 	userHandler := https.NewUserHandler(userService)
 
-	
-	r.Use(middleware.RateLimitMiddleware(limiter))
 	r.GET("/healthy", healthyHandler)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	protect := r.Group("/api")
