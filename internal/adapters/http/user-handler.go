@@ -26,10 +26,11 @@ func NewUserHandler(service *services.UserService) *UserHandler {
 //
 // @Summary Create a new user
 // @Description Create a user with the provided name and password
+// @Security BearerAuth
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param body body CreateUserRequest true "User data"
+// @Param body body UserRequest true "User data"
 // @Success 201
 // @Failure 400
 // @Failure 500
@@ -60,6 +61,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 //
 // @Summary Get user by name
 // @Description Retrieve a user by name
+// @Security BearerAuth
 // @Tags users
 // @Produce json
 // @Param name path string true "User name"
@@ -91,6 +93,18 @@ func (h *UserHandler) GetUserByName(c *gin.Context) {
 	})
 }
 
+// Login godoc
+//
+// @Summary Login with credentials
+// @Description Login to get the jwt token with users data in db
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param body body UserRequest true "User Credentials"
+// @Success 200 {object} map[string]string
+// @Failure 400
+// @Failure 401
+// @Router /login [post]
 func (h *UserHandler) Login(c *gin.Context) {
 	var request UserRequest
 

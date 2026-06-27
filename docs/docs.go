@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/api/clicks/{urlId}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve all clicks associated with a short URL",
                 "produces": [
                     "application/json"
@@ -47,6 +52,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Register a click for a URL",
                 "produces": [
                     "application/json"
@@ -79,6 +89,11 @@ const docTemplate = `{
         },
         "/api/clicks/{urlId}/count": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Returns the total number of clicks for a short URL",
                 "produces": [
                     "application/json"
@@ -111,6 +126,11 @@ const docTemplate = `{
         },
         "/api/urls": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create a shortened URL and store it in the database",
                 "consumes": [
                     "application/json"
@@ -129,7 +149,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Url"
+                            "$ref": "#/definitions/http.CreateUrlRequest"
                         }
                     }
                 ],
@@ -151,6 +171,11 @@ const docTemplate = `{
         },
         "/api/urls/short/{code}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a URL using its generated short code",
                 "produces": [
                     "application/json"
@@ -189,6 +214,11 @@ const docTemplate = `{
         },
         "/api/urls/user/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve all URLs associated with a user",
                 "produces": [
                     "application/json"
@@ -230,6 +260,11 @@ const docTemplate = `{
         },
         "/api/urls/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a URL by its database ID",
                 "produces": [
                     "application/json"
@@ -268,6 +303,11 @@ const docTemplate = `{
         },
         "/api/users": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create a user with the provided name and password",
                 "consumes": [
                     "application/json"
@@ -286,7 +326,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateUserRequest"
+                            "$ref": "#/definitions/http.UserRequest"
                         }
                     }
                 ],
@@ -305,6 +345,11 @@ const docTemplate = `{
         },
         "/api/users/{name}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a user by name",
                 "produces": [
                     "application/json"
@@ -338,8 +383,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/login": {
+            "post": {
+                "description": "Login to get the jwt token with users data in db",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Login with credentials",
+                "parameters": [
+                    {
+                        "description": "User Credentials",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/http.UserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/{code}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Redirects the user to the original URL associated with the short code",
                 "tags": [
                     "urls"
@@ -395,7 +488,16 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateUserRequest": {
+        "http.CreateUrlRequest": {
+            "type": "object",
+            "properties": {
+                "original_url": {
+                    "type": "string",
+                    "example": "https://google.com"
+                }
+            }
+        },
+        "http.UserRequest": {
             "type": "object",
             "properties": {
                 "name": {
@@ -405,6 +507,13 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

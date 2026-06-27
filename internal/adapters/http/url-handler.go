@@ -10,6 +10,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Struct criada somente para o swagger
+type CreateUrlRequest struct {
+    OriginalUrl string `json:"original_url" example:"https://google.com"`
+}
+
 type UrlHandler struct {
 	service *services.UrlService
 	clickService *services.ClickService
@@ -26,10 +31,11 @@ func NewUrlHandler(service *services.UrlService, clickService *services.ClickSer
 //
 // @Summary Create a new URL
 // @Description Create a shortened URL and store it in the database
+// @Security BearerAuth
 // @Tags urls
 // @Accept json
 // @Produce json
-// @Param body body domain.Url true "URL data"
+// @Param body body CreateUrlRequest true "URL data"
 // @Success 201 {object} domain.Url
 // @Failure 400
 // @Failure 500
@@ -43,6 +49,16 @@ func (h *UrlHandler) CreateUrl(c *gin.Context) {
 		})
 		return
 	}
+
+	userID, exists := c.Get("id")
+
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"Error": "Unauthorized",
+		})
+	}
+
+	url.UserID = userID.(uint)
 
 	if err := h.service.CreateUrl(c.Request.Context(), &url); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -60,6 +76,7 @@ func (h *UrlHandler) CreateUrl(c *gin.Context) {
 //
 // @Summary Redirect to original URL
 // @Description Redirects the user to the original URL associated with the short code
+// @Security BearerAuth
 // @Tags urls
 // @Param code path string true "Short URL code"
 // @Success 301 "Redirect"
@@ -93,6 +110,7 @@ func (h *UrlHandler) Redirect(c *gin.Context) {
 //
 // @Summary Get URL by ID
 // @Description Retrieve a URL by its database ID
+// @Security BearerAuth
 // @Tags urls
 // @Produce json
 // @Param id path int true "URL ID"
@@ -131,6 +149,7 @@ func (h *UrlHandler) GetByID(c *gin.Context) {
 //
 // @Summary Get URL by short code
 // @Description Retrieve a URL using its generated short code
+// @Security BearerAuth
 // @Tags urls
 // @Produce json
 // @Param code path string true "Short URL code"
@@ -166,6 +185,7 @@ func (h *UrlHandler) GetByShortCode(c *gin.Context) {
 //
 // @Summary Get URLs by user ID
 // @Description Retrieve all URLs associated with a user
+// @Security BearerAuth
 // @Tags urls
 // @Produce json
 // @Param id path int true "User ID"

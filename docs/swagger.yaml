@@ -17,7 +17,13 @@ definitions:
       user_id:
         type: integer
     type: object
-  http.CreateUserRequest:
+  http.CreateUrlRequest:
+    properties:
+      original_url:
+        example: https://google.com
+        type: string
+    type: object
+  http.UserRequest:
     properties:
       name:
         type: string
@@ -48,6 +54,8 @@ paths:
           description: Not Found
         "410":
           description: Gone
+      security:
+      - BearerAuth: []
       summary: Redirect to original URL
       tags:
       - urls
@@ -69,6 +77,8 @@ paths:
           description: Not Found
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Get clicks by URL code
       tags:
       - clicks
@@ -89,6 +99,8 @@ paths:
           description: Bad Request
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Register a click
       tags:
       - clicks
@@ -110,6 +122,8 @@ paths:
           description: Not Found
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Count clicks by URL code
       tags:
       - clicks
@@ -124,7 +138,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/domain.Url'
+          $ref: '#/definitions/http.CreateUrlRequest'
       produces:
       - application/json
       responses:
@@ -136,6 +150,8 @@ paths:
           description: Bad Request
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Create a new URL
       tags:
       - urls
@@ -161,6 +177,8 @@ paths:
           description: Not Found
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Get URL by ID
       tags:
       - urls
@@ -186,6 +204,8 @@ paths:
           description: Not Found
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Get URL by short code
       tags:
       - urls
@@ -213,6 +233,8 @@ paths:
           description: Not Found
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Get URLs by user ID
       tags:
       - urls
@@ -227,7 +249,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/http.CreateUserRequest'
+          $ref: '#/definitions/http.UserRequest'
       produces:
       - application/json
       responses:
@@ -237,6 +259,8 @@ paths:
           description: Bad Request
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Create a new user
       tags:
       - users
@@ -260,7 +284,42 @@ paths:
           description: Not Found
         "500":
           description: Internal Server Error
+      security:
+      - BearerAuth: []
       summary: Get user by name
       tags:
       - users
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login to get the jwt token with users data in db
+      parameters:
+      - description: User Credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      summary: Login with credentials
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

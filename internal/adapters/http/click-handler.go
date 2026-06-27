@@ -26,6 +26,7 @@ func NewClickHandler(service *services.ClickService, urlService *services.UrlSer
 //
 // @Summary Register a click
 // @Description Register a click for a URL
+// @Security BearerAuth
 // @Tags clicks
 // @Produce json
 // @Param urlId path int true "URL ID"
@@ -59,6 +60,7 @@ func (h *ClickHandler) Create(c *gin.Context) {
 //
 // @Summary Get clicks by URL code
 // @Description Retrieve all clicks associated with a short URL
+// @Security BearerAuth
 // @Tags clicks
 // @Produce json
 // @Param urlId path string true "Short URL code"
@@ -88,6 +90,7 @@ func (h *ClickHandler) GetByURLID(c *gin.Context) {
 //
 // @Summary Count clicks by URL code
 // @Description Returns the total number of clicks for a short URL
+// @Security BearerAuth
 // @Tags clicks
 // @Produce json
 // @Param urlId path string true "Short URL code"

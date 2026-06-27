@@ -15,6 +15,7 @@ import (
 // @description     API focused on being a URL shortener.
 // @host            localhost:8080
 // @BasePath        /api
+// @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
 func main() {
