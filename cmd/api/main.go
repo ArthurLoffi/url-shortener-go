@@ -13,7 +13,7 @@ import (
 // @title           URL Shortener
 // @version         1.0
 // @description     API focused on being a URL shortener.
-// @host            localhost:8080
+// @host            localhost
 // @BasePath        /api
 // @securityDefinitions.apikey BearerAuth
 // @in header

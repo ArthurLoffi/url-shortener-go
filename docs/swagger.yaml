@@ -30,7 +30,7 @@ definitions:
       password:
         type: string
     type: object
-host: localhost:8080
+host: localhost
 info:
   contact: {}
   description: API focused on being a URL shortener.
