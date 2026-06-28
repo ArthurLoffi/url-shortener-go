@@ -45,9 +45,10 @@ func (s *UrlService) Redirect(ctx context.Context, code string) (*domain.Url, er
     }
 
     cached, err := s.cache.Get(ctx, code)
-    if err == nil {
-        return &domain.Url{OriginalUrl: cached}, nil
-    }
+	if err == nil {
+    	url.OriginalUrl = cached
+ 	   return url, nil
+	}
 
 	s.cache.Set(ctx, code, url.OriginalUrl)
 
@@ -64,4 +65,8 @@ func (s *UrlService) GetByShortCode(ctx context.Context, code string) (*domain.U
 
 func (s *UrlService) GetByUserID(ctx context.Context, userID uint) ([]domain.Url, error) {
 	return s.repo.GetByUserID(ctx, userID)
+}
+
+func (s *UrlService) UpdateClickCount(ctx context.Context, urlID uint, count uint) error {
+	return s.repo.UpdateClickCount(ctx, urlID, count)
 }

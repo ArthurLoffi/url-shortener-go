@@ -103,6 +103,22 @@ func (h *UrlHandler) Redirect(c *gin.Context) {
     }
     h.clickService.Create(c.Request.Context(), click)
 
+	count, err := h.clickService.CountByURLID(c.Request.Context(), url.Id)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+        return
+    }
+
+	err = h.service.UpdateClickCount(c.Request.Context(), url.Id, uint(count))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+        return
+	}
+
     c.Redirect(http.StatusMovedPermanently, url.OriginalUrl)
 }
 

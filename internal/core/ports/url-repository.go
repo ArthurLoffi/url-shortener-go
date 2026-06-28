@@ -12,4 +12,5 @@ type UrlRepository interface {
 	GetByID(ctx context.Context, id uint) (*domain.Url, error)
 	GetByShortCode(ctx context.Context, code string) (*domain.Url, error)
 	GetByUserID(ctx context.Context, userID uint) ([]domain.Url, error)
+	UpdateClickCount(ctx context.Context, urlID uint, count uint) error
 }

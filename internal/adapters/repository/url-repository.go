@@ -48,3 +48,8 @@ func (r *UrlRepository) GetByUserID(ctx context.Context, userID uint) ([]domain.
 	err := r.db.WithContext(ctx).Where("user_id = ?", userID).First(&urls).Error
 	return urls, err
 }
+
+func (r *UrlRepository) UpdateClickCount(ctx context.Context, urlID uint, count uint) error {
+	err := r.db.Model(&domain.Url{}).WithContext(ctx).Where("id = ?", urlID).Update("clicks", count).Error
+	return err
+}
