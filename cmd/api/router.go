@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	"url-shortener-go/internal/adapters/cache"
-	"url-shortener-go/internal/adapters/database"
-	https "url-shortener-go/internal/adapters/http"
-	"url-shortener-go/internal/adapters/repository"
+	"url-shortener-go/internal/adapters/outbound/cache"
+	"url-shortener-go/internal/adapters/outbound/database"
+	https "url-shortener-go/internal/adapters/inbound/http"
+	"url-shortener-go/internal/adapters/outbound/repository"
 	"url-shortener-go/internal/core/services"
 	"url-shortener-go/internal/middleware"
 

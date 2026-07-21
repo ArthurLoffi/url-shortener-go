@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"url-shortener-go/internal/adapters/cache"
+	"url-shortener-go/internal/adapters/outbound/cache"
+	"url-shortener-go/internal/adapters/outbound/utils"
 	"url-shortener-go/internal/core/domain"
 	"url-shortener-go/internal/core/ports"
-	"url-shortener-go/internal/core/utils"
 )
 
 type UrlService struct {

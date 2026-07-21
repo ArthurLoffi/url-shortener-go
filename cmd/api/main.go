@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"os"
 	"url-shortener-go/docs"
-	"url-shortener-go/internal/adapters/database"
+	"url-shortener-go/internal/adapters/outbound/database"
 	"url-shortener-go/internal/middleware"
 
 	"github.com/gin-gonic/gin"

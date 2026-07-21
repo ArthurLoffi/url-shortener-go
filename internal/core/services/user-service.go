@@ -5,7 +5,7 @@ import (
 	"errors"
 	"url-shortener-go/internal/core/domain"
 	"url-shortener-go/internal/core/ports"
-	"url-shortener-go/internal/core/utils"
+	"url-shortener-go/internal/adapters/outbound/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
